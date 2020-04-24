@@ -22,7 +22,8 @@ type apiCredentials struct {
 	ClientSecret    string `json:"client_secret"`
 }
 
-type apiTokenCredentials struct {
+// APITokenCredentials return struct to give AccessToken, TokenType, etc
+type APITokenCredentials struct {
 	AccessToken  string `json:"access_token"`
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int    `json:"expires_in"`
@@ -30,7 +31,8 @@ type apiTokenCredentials struct {
 	Scope        string `json:"scope"`
 }
 
-func newBotFromFile(file string) apiTokenCredentials {
+// NewBotFromFile initializes bot from local file
+func NewBotFromFile(file string) APITokenCredentials {
 	var cred apiCredentials
 
 	data, _ := ioutil.ReadFile(fmt.Sprintf("../%s", file))
@@ -46,7 +48,7 @@ func newBotFromFile(file string) apiTokenCredentials {
 
 }
 
-func authorizeAccount(credentials apiCredentials) apiTokenCredentials {
+func authorizeAccount(credentials apiCredentials) APITokenCredentials {
 	client := &http.Client{}
 	requestBody := url.Values{}
 
@@ -75,7 +77,7 @@ func authorizeAccount(credentials apiCredentials) apiTokenCredentials {
 		log.Fatal(err)
 	}
 
-	creds := apiTokenCredentials{}
+	creds := APITokenCredentials{}
 
 	err = json.Unmarshal(body, &creds)
 	if err != nil {
