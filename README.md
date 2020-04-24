@@ -1,2 +1,2 @@
 # GoReddit
-Reddit API wrapper in golang
+Golang Reddit API wrapper (WIP)
