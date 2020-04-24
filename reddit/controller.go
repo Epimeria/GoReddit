@@ -8,47 +8,33 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"../model"
 )
 
 const (
 	apiAccessTokenURL = "https://www.reddit.com/api/v1/access_token"
 )
 
-type apiCredentials struct {
-	UserAgent       string `json:"user_agent"`
-	AccountUsername string `json:"username"`
-	AccountPassword string `json:"password"`
-	ClientID        string `json:"client_id"`
-	ClientSecret    string `json:"client_secret"`
-}
-
-// APITokenCredentials return struct to give AccessToken, TokenType, etc
-type APITokenCredentials struct {
-	AccessToken  string `json:"access_token"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int    `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-	Scope        string `json:"scope"`
-}
-
 // NewBotFromFile initializes bot from local file
-func NewBotFromFile(file string) APITokenCredentials {
-	var cred apiCredentials
+func NewBotFromFile(file string) (model.APICredentials, model.APITokenCredentials) {
+	var cred model.APICredentials
 
-	data, _ := ioutil.ReadFile(fmt.Sprintf("../%s", file))
-
-	err := json.Unmarshal(data, &cred)
+	data, err := ioutil.ReadFile(fmt.Sprintf(file))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("\nError loading credential file:\nError: %s", err)
 	}
 
-	delta := authorizeAccount(cred)
+	err = json.Unmarshal(data, &cred)
+	if err != nil {
+		log.Fatalf("\nError unpacking JSON credential file:\nError: %s\nFile contents: %s", err, data)
+	}
 
-	return delta
+	return cred, authorizeAccount(cred)
 
 }
 
-func authorizeAccount(credentials apiCredentials) APITokenCredentials {
+func authorizeAccount(credentials model.APICredentials) model.APITokenCredentials {
 	client := &http.Client{}
 	requestBody := url.Values{}
 
@@ -77,9 +63,10 @@ func authorizeAccount(credentials apiCredentials) APITokenCredentials {
 		log.Fatal(err)
 	}
 
-	creds := APITokenCredentials{}
+	creds := model.APITokenCredentials{}
 
 	err = json.Unmarshal(body, &creds)
+
 	if err != nil {
 		log.Fatal(err)
 	}
