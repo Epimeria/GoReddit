@@ -1,5 +1,9 @@
 package model
 
+/*
+controller.go
+*/
+
 // APICredentials holds the information from user's .cred file
 type APICredentials struct {
 	UserAgent       string `json:"user_agent"`
@@ -22,6 +26,22 @@ type APITokenCredentials struct {
 type Bot struct {
 	Account        APICredentials
 	Authentication APITokenCredentials
+}
+
+/*
+account.go
+*/
+
+// CollectSelfInfo coalesces all info from the /me endpoints
+type CollectSelfInfo struct {
+	Me        APIv1Me
+	Karma     APIv1MeKarma
+	Prefs     APIv1MePrefs
+	Trophies  APIv1MeTrophies
+	Blocked   PrefsBlocked
+	Friends   PrefsFriends
+	Messaging PrefsMessaging
+	Trusted   PrefsTrusted
 }
 
 // APIv1Me endpoint: https://oauth.reddit.com/api/v1/me
@@ -259,5 +279,47 @@ type APIv1MeTrophies struct {
 				Description interface{} `json:"description"`
 			} `json:"data"`
 		} `json:"trophies"`
+	} `json:"data"`
+}
+
+//PrefsBlocked endpoint: https://oauth.reddit.com/prefs/blocked
+type PrefsBlocked struct {
+	Kind string `json:"kind"`
+	Data struct {
+		Children []struct {
+			Date  float64 `json:"date"`
+			RelID string  `json:"rel_id"`
+			Name  string  `json:"name"`
+			ID    string  `json:"id"`
+		} `json:"children"`
+	} `json:"data"`
+}
+
+//PrefsFriends endpoint: https://oauth.reddit.com/prefs/friends
+type PrefsFriends []struct {
+	Kind string `json:"kind"`
+	Data struct {
+		Children []interface{} `json:"children"`
+	} `json:"data"`
+}
+
+//PrefsMessaging endpoint: https://oauth.reddit.com/prefs/messaging
+type PrefsMessaging []struct {
+	Kind string `json:"kind"`
+	Data struct {
+		Children []struct {
+			Date  float64 `json:"date"`
+			RelID string  `json:"rel_id"`
+			Name  string  `json:"name"`
+			ID    string  `json:"id"`
+		} `json:"children"`
+	} `json:"data"`
+}
+
+//PrefsTrusted endpoint: https://oauth.reddit.com/prefs/trusted
+type PrefsTrusted struct {
+	Kind string `json:"kind"`
+	Data struct {
+		Children []interface{} `json:"children"`
 	} `json:"data"`
 }
