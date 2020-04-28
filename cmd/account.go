@@ -6,20 +6,6 @@ import (
 	"../model"
 )
 
-const (
-	me             = "https://oauth.reddit.com/api/v1/me"
-	blocked        = "https://oauth.reddit.com/api/v1/me/blocked"
-	friends        = "https://oauth.reddit.com/api/v1/me/friends"
-	karma          = "https://oauth.reddit.com/api/v1/me/karma"
-	prefs          = "https://oauth.reddit.com/api/v1/me/prefs"
-	trophies       = "https://oauth.reddit.com/api/v1/me/trophies"
-	prefsBlocked   = "https://oauth.reddit.com/prefs/blocked"
-	prefsFriends   = "https://oauth.reddit.com/prefs/friends"
-	prefsMessaging = "https://oauth.reddit.com/prefs/messaging"
-	prefsTrusted   = "https://oauth.reddit.com/prefs/trusted"
-	prefsWhere     = "https://oauth.reddit.com/prefs/where"
-)
-
 // Me targets endpoint: /api/v1/me
 func Me(bot *model.Bot) (model.APIv1Me, error) {
 	res := model.APIv1Me{}
@@ -156,7 +142,7 @@ func Where(bot *model.Bot) (model.PrefsBlocked, error) {
 	return res, nil
 }
 
-// CollectSelfInfo returns chunk of info
+// CollectSelfInfo returns chunk of account info from both /me/ and /prefs/ endpoints
 func CollectSelfInfo(bot *model.Bot) (model.CollectSelfInfo, error) {
 	alpha, err := Me(bot)
 	beta, err := Karma(bot)
